@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.ipynb
+.git/
+.gitignore
+.env
+venv/
+work out system/
+Data collection/
+health life system/
+Meal system/
