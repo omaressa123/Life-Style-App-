@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Style App</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Life Style Recommendation App</h1>
+
+        <!-- Workout Recommendation Form -->
+        <section class="recommender-section">
+            <h2>Workout Recommendation</h2>
+            <form method="POST" action="/">
+                <label for="workout_difficulty">Difficulty Level:</label>
+                <select name="workout_difficulty" id="workout_difficulty">
+                    {% for level in difficulty_levels %}
+                        <option value="{{ level }}">{{ level }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="workout_muscle_group">Target Muscle Group:</label>
+                <select name="workout_muscle_group" id="workout_muscle_group">
+                    <option value="">Any</option>
+                    {% for muscle in target_muscle_groups %}
+                        <option value="{{ muscle }}">{{ muscle }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="workout_n">Number of Recommendations:</label>
+                <input type="number" name="workout_n" id="workout_n" value="3" min="1" max="10"><br><br>
+
+                <button type="submit" name="workout_submit">Get Workout Recommendations</button>
+            </form>
+
+            {% if workout_recommendations %}
+                <h3>Workout Results:</h3>
+                {% if workout_recommendations[0].error %}
+                    <p style="color: red;">{{ workout_recommendations[0].error }}</p>
+                {% else %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name of Exercise</th>
+                                <th>Target Muscle Group</th>
+                                <th>Difficulty Level</th>
+                                <th>Calories Burned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rec in workout_recommendations %}
+                                <tr>
+                                    <td>{{ rec['Name of Exercise'] }}</td>
+                                    <td>{{ rec['Target Muscle Group_Cleaned'] }}</td>
+                                    <td>{{ rec['Difficulty Level_Cleaned'] }}</td>
+                                    <td>{{ rec['Calories_Burned'] | round(2) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            {% endif %}
+        </section>
+
+        <hr>
+
+        <!-- Health Recommendation Form -->
+        <section class="recommender-section">
+            <h2>Health & Lifestyle Recommendation</h2>
+            <form method="POST" action="/">
+                <label for="health_age">Age:</label>
+                <input type="number" name="health_age" id="health_age" value="28" required><br><br>
+
+                <label for="health_gender">Gender:</label>
+                <select name="health_gender" id="health_gender">
+                    {% for gender in genders %}
+                        <option value="{{ gender }}">{{ gender }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="health_bmi">BMI:</label>
+                <input type="number" name="health_bmi" id="health_bmi" value="27.5" step="0.1" required><br><br>
+
+                <label for="health_fat_percentage">Fat Percentage:</label>
+                <input type="number" name="health_fat_percentage" id="health_fat_percentage" value="22" step="0.1" required><br><br>
+
+                <label for="health_workout_frequency">Workout Frequency (days/week):</label>
+                <input type="number" name="health_workout_frequency" id="health_workout_frequency" value="2" step="0.1" required><br><br>
+
+                <label for="health_physical_exercise">Physical Exercise:</label>
+                <select name="health_physical_exercise" id="health_physical_exercise">
+                    {% for exercise in physical_exercises %}
+                        <option value="{{ exercise }}">{{ exercise }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="health_water_intake">Water Intake (liters):</label>
+                <input type="number" name="health_water_intake" id="health_water_intake" value="1.4" step="0.1" required><br><br>
+
+                <label for="health_daily_meals_frequency">Daily Meals Frequency:</label>
+                <input type="number" name="health_daily_meals_frequency" id="health_daily_meals_frequency" value="2" required><br><br>
+
+                <button type="submit" name="health_submit">Get Health Recommendations</button>
+            </form>
+
+            {% if health_recommendations %}
+                <h3>Health Results:</h3>
+                {% if health_recommendations.error %}
+                    <p style="color: red;">{{ health_recommendations.error }}</p>
+                {% else %}
+                    <p><strong>Lifestyle Score:</strong> {{ health_recommendations.lifestyle_score }}/10</p>
+                    <h4>Recommendations:</h4>
+                    <ul>
+                        {% for rec in health_recommendations.recommendations %}
+                            <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endif %}
+        </section>
+
+        <hr>
+
+        <!-- Meal Recommendation Form -->
+        <section class="recommender-section">
+            <h2>Meal Recommendation</h2>
+            <form method="POST" action="/">
+                <label for="meal_meal_name">Choose a Meal:</label>
+                <select name="meal_meal_name" id="meal_meal_name">
+                    {% for meal in meal_names %}
+                        <option value="{{ meal }}">{{ meal }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="meal_top_n">Number of Recommendations:</label>
+                <input type="number" name="meal_top_n" id="meal_top_n" value="2" min="1" max="10"><br><br>
+
+                <button type="submit" name="meal_submit">Get Meal Recommendations</button>
+            </form>
+
+            {% if meal_recommendations %}
+                <h3>Meal Results:</h3>
+                {% if meal_recommendations[0].error %}
+                    <p style="color: red;">{{ meal_recommendations[0].error }}</p>
+                {% else %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Meal Name</th>
+                                <th>Meal Type</th>
+                                <th>Diet Type</th>
+                                <th>Calories</th>
+                                <th>Proteins</th>
+                                <th>Carbs</th>
+                                <th>Fats</th>
+                                <th>Cooking Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rec in meal_recommendations %}
+                                <tr>
+                                    <td>{{ rec['meal_name'] }}</td>
+                                    <td>{{ rec['meal_type'] }}</td>
+                                    <td>{{ rec['diet_type'] }}</td>
+                                    <td>{{ rec['Calories'] | round(2) }}</td>
+                                    <td>{{ rec['Proteins'] | round(2) }}</td>
+                                    <td>{{ rec['Carbs'] | round(2) }}</td>
+                                    <td>{{ rec['Fats'] | round(2) }}</td>
+                                    <td>{{ rec['cooking_method'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            {% endif %}
+        </section>
+
+    </div>
+</body>
+</html>
